@@ -5,16 +5,17 @@ import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.*;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 
 public class Cover implements SectionDoc {
 
+    private static final String BRASAO_IMAGE = "brasao_colorido.png";
+
     @Override
     public void write(XWPFDocument doc) {
-
-        String brasaoPath = "brasao_colorido.png";
 
         XWPFStyles styles = doc.createStyles();
         CTStyle ctStyle = CTStyle.Factory.newInstance();
@@ -38,7 +39,7 @@ public class Cover implements SectionDoc {
         headerP.setStyle("defaultStyle");
 
         RunBuilder rb = new RunBuilder(headerP)
-                .img(brasaoPath, PictureType.findByOoxmlId(XWPFDocument.PICTURE_TYPE_PNG), 120, 75)
+                .img(BRASAO_IMAGE, PictureType.findByOoxmlId(XWPFDocument.PICTURE_TYPE_PNG), 120, 75)
                 .textAndBreak(null)
                 .newRun()
                 .textAndBreak("MINISTÉRIO DA EDUCAÇÃO")
@@ -79,10 +80,6 @@ public class Cover implements SectionDoc {
         Cover c = new Cover();
         c.write(doc);
 
-        try (FileOutputStream fos = new FileOutputStream("build/reports/capa.docx")) {
-            doc.write(fos);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Utils.saveDocxFile(doc, "cover");
     }
 }

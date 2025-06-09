@@ -35,11 +35,7 @@ public class TableOfContents implements SectionDoc {
         TableOfContents toc = new TableOfContents();
         toc.write(doc);
 
-        try (FileOutputStream fos = new FileOutputStream("build/reports/toc.docx")) {
-            doc.write(fos);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Utils.saveDocxFile(doc, "toc");
 
     }
 
