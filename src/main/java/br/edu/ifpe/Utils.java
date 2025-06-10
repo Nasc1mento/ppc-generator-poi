@@ -6,15 +6,21 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.Objects;
+
 
 public abstract class Utils {
+
+    public static final String OUTPUT_PATH = "build/generated/docs/";
+
     public static void saveDocxFile(XWPFDocument doc, String name) {
-        final String path = "build/generated/docs/";
-        File f = new File(path);
+        Objects.requireNonNull(doc);
+        Objects.requireNonNull(doc);
+        File f = new File(OUTPUT_PATH);
         if (!f.exists())
             f.mkdirs();
 
-        try (FileOutputStream fos = new FileOutputStream(path+name+".docx")) {
+        try (FileOutputStream fos = new FileOutputStream(OUTPUT_PATH + name + ".docx")) {
             doc.write(fos);
         } catch (IOException e) {
             throw new RuntimeException(e);
