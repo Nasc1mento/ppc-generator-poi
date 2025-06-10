@@ -5,21 +5,30 @@ import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.*;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.math.BigInteger;
+import java.util.Objects;
 
-public class Cover implements SectionDoc {
+import static org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG;
+
+public class Cover implements DocumentStep {
 
     private static final String BRASAO_IMAGE = "brasao_colorido.png";
+    private static final String DEFAULT_STYLE_ID = "coverDefaultStyle";
+
+
+    private XWPFDocument doc;
+
+
+    public Cover(XWPFDocument doc) {
+        Objects.requireNonNull(doc);
+        this.doc = doc;
+    }
 
     @Override
-    public void write(XWPFDocument doc) {
-
-        XWPFStyles styles = doc.createStyles();
+    public void run() {
+        XWPFStyles styles = this.doc.createStyles();
         CTStyle ctStyle = CTStyle.Factory.newInstance();
-        ctStyle.setStyleId("defaultStyle");
+        ctStyle.setStyleId(DEFAULT_STYLE_ID);
         CTString styleName = CTString.Factory.newInstance();
         styleName.setVal("defaultStyle");
         ctStyle.setName(styleName);
@@ -35,25 +44,24 @@ public class Cover implements SectionDoc {
         dfStyle.setType(STStyleType.PARAGRAPH);
         styles.addStyle(dfStyle);
 
-        XWPFParagraph headerP = doc.createParagraph();
-        headerP.setStyle("defaultStyle");
+        XWPFParagraph headerP = this.doc.createParagraph();
+        headerP.setStyle(DEFAULT_STYLE_ID);
 
         RunBuilder rb = new RunBuilder(headerP)
-                .img(BRASAO_IMAGE, PictureType.findByOoxmlId(XWPFDocument.PICTURE_TYPE_PNG), 120, 75)
-                .textAndBreak(null)
+                .img(BRASAO_IMAGE, PictureType.findByOoxmlId(PICTURE_TYPE_PNG), 120, 75).ln()
                 .newRun()
-                .textAndBreak("MINISTÉRIO DA EDUCAÇÃO")
-                .textAndBreak("SECRETARIA DE EDUCAÇÃO PROFISSIONAL E TECNOLÓGICA")
-                .textAndBreak("INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DE PERNAMBUCO")
+                .textln("MINISTÉRIO DA EDUCAÇÃO")
+                .textln("SECRETARIA DE EDUCAÇÃO PROFISSIONAL E TECNOLÓGICA")
+                .textln("INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DE PERNAMBUCO")
                 .newRun()
                 .text("CAMPUS ")
                 .italic(true)
                 .newRun()
-                .textAndBreak("IGARASSU")
+                .textln("IGARASSU")
                 .text("DIREÇÃO DE ENSINO");
 
         for (int i = 0; i < 18; i++) {
-            rb.textAndBreak(null);
+            rb.ln();
         }
 
         rb.newRun()
@@ -62,24 +70,22 @@ public class Cover implements SectionDoc {
                 .bold(true);
 
 
-        XWPFHeaderFooterPolicy policy = doc.getHeaderFooterPolicy();
+        XWPFHeaderFooterPolicy policy = this.doc.getHeaderFooterPolicy();
         if (policy == null) {
-            policy = doc.createHeaderFooterPolicy();
+            policy = this.doc.createHeaderFooterPolicy();
         }
-
         XWPFFooter footer = policy.createFooter(XWPFHeaderFooterPolicy.DEFAULT);
         XWPFParagraph footerP = footer.createParagraph();
-        footerP.setStyle("defaultStyle");
+        footerP.setStyle(DEFAULT_STYLE_ID);
         new RunBuilder(footerP)
-                .textAndBreak("IGARASSU")
+                .textln("IGARASSU")
                 .text("2025");
     }
 
     public static void main(String[] args) {
         XWPFDocument doc = new XWPFDocument();
-        Cover c = new Cover();
-        c.write(doc);
-
+        Cover c = new Cover(doc);
+        c.run();
         Utils.saveDocxFile(doc, "cover");
     }
 }

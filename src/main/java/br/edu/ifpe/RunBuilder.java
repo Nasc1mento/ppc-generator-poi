@@ -32,8 +32,13 @@ public class RunBuilder {
         return this;
     }
 
-    public RunBuilder textAndBreak(String text) {
+    public RunBuilder textln(String text) {
         this.run.setText(text);
+        this.run.addBreak();
+        return this;
+    }
+
+    public RunBuilder ln() {
         this.run.addBreak();
         return this;
     }

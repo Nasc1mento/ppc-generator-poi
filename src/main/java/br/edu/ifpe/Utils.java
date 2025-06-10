@@ -5,6 +5,7 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 
 public abstract class Utils {
     public static void saveDocxFile(XWPFDocument doc, String name) {
@@ -18,5 +19,9 @@ public abstract class Utils {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static BigInteger inchesToTwips(double inches) {
+        return BigInteger.valueOf((long) (1440L * inches));
     }
 }
